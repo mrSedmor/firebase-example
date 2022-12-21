@@ -96,6 +96,3 @@ const auth = getAuth(firebaseApp);
 // connectAuthEmulator(auth, 'http://localhost:9099');
 
 monitorAuthState();
-
-//
-// import './firebaseStandardUi';
