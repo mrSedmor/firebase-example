@@ -13,7 +13,7 @@ import {
   GithubAuthProvider,
 } from 'firebase/auth';
 
-export const firebaseApp = initializeApp({
+const firebaseConfig = {
   apiKey: 'AIzaSyDIoIRzEVLYUAacFuhtdxkAGV2NgLE6g88',
   authDomain: 'filmoteka-by-10x.firebaseapp.com',
   projectId: 'filmoteka-by-10x',
@@ -22,40 +22,7 @@ export const firebaseApp = initializeApp({
   appId: '1:584362052438:web:cf4a6cf976e80465e364f7',
   databaseURL:
     'https://filmoteka-by-10x-default-rtdb.europe-west1.firebasedatabase.app/',
-});
-
-// Monitor auth state
-const monitorAuthState = async () => {
-  onAuthStateChanged(auth, user => {
-    if (user) {
-      console.log(user);
-      showApp();
-      showLoginState(user);
-
-      // hideLoginError();
-      // hideLinkError();
-    } else {
-      console.log('no user');
-      showLoginForm();
-      lblAuthState.innerHTML = `You're not logged in.`;
-    }
-  });
 };
-
-// Log out
-const logout = async () => {
-  await signOut(auth);
-};
-
-btnLogout.addEventListener('click', logout);
-
-export const auth = getAuth(firebaseApp);
-
-monitorAuthState();
-
-const githubProvider = new GithubAuthProvider();
-
-const authUi = new firebaseui.auth.AuthUI(auth);
 
 const uiConfig = {
   callbacks: {
@@ -63,10 +30,12 @@ const uiConfig = {
       // User successfully signed in.
       // Return type determines whether we continue the redirect automatically
       // or whether we leave that to developer to handle.
+      console.log('Sign in success callback');
       console.log(authResult);
-      return true;
+      return false;
     },
     uiShown: function () {
+      console.log('UI widget is rendered callback');
       // The widget is rendered.
       // Hide the loader.
       // document.getElementById('loader').style.display = 'none';
@@ -91,8 +60,44 @@ const uiConfig = {
   privacyPolicyUrl: '<your-privacy-policy-url>',
 };
 
-authUi.start('#firebaseui-auth-container', uiConfig);
+export const firebaseApp = initializeApp(firebaseConfig);
+export const auth = getAuth(firebaseApp);
+const authUi = new firebaseui.auth.AuthUI(auth);
 
+monitorAuthState();
+
+btnLogout.addEventListener('click', logout);
+startAuthUi();
+
+return;
+
+// Monitor auth state
+async function monitorAuthState() {
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      console.log('Login event');
+      console.log(user);
+      showApp();
+      showLoginState(user);
+    } else {
+      console.log('No user event');
+      showLoginForm();
+      lblAuthState.innerHTML = `You're not logged in.`;
+    }
+  });
+}
+
+// Log out
+async function logout() {
+  await signOut(auth);
+  startAuthUi();
+}
+
+function startAuthUi() {
+  authUi.start('#firebaseui-auth-container', uiConfig);
+}
+
+return;
 // import './db';
 import {
   getDatabase,
@@ -104,8 +109,6 @@ import {
   child,
 } from 'firebase/database';
 const db = getDatabase(firebaseApp);
-
-return;
 
 setTimeout(() => {
   if (!auth.currentUser) return;
