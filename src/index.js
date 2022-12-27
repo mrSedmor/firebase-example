@@ -69,7 +69,41 @@ monitorAuthState();
 btnLogout.addEventListener('click', logout);
 startAuthUi();
 
+import {
+  getDatabase,
+  ref,
+  set,
+  onValue,
+  get,
+  update,
+  child,
+  remove,
+} from 'firebase/database';
+
+// Database
+const db = getDatabase(firebaseApp);
+
+runExample();
+
 return;
+
+async function runExample() {
+  const dataRef = ref(db, '/data/subdir');
+
+  const dataToSet = {
+    width: 50,
+    height: 60,
+  };
+
+  await set(dataRef, dataToSet);
+  // .then(console.log.bind(null, 'set-then'))
+  // .catch(console.log.bind(null, 'set-catch'));
+  console.log((await get(dataRef)).val());
+  await update(dataRef, { newData: '...' });
+  console.log((await get(dataRef)).val());
+  await remove(dataRef);
+  console.log((await get(dataRef)).val());
+}
 
 // Monitor auth state
 async function monitorAuthState() {
@@ -87,6 +121,22 @@ async function monitorAuthState() {
   });
 }
 
+const root = {
+  users: {
+    user1: {
+      watched: {
+        1: 1,
+        2: 2,
+      },
+    },
+    user2: {
+      watched: {
+        2: 2,
+      },
+    },
+  },
+};
+
 // Log out
 async function logout() {
   await signOut(auth);
@@ -99,16 +149,6 @@ function startAuthUi() {
 
 return;
 // import './db';
-import {
-  getDatabase,
-  ref,
-  set,
-  onValue,
-  get,
-  update,
-  child,
-} from 'firebase/database';
-const db = getDatabase(firebaseApp);
 
 setTimeout(() => {
   if (!auth.currentUser) return;
