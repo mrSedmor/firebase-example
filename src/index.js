@@ -121,22 +121,6 @@ async function monitorAuthState() {
   });
 }
 
-const root = {
-  users: {
-    user1: {
-      watched: {
-        1: 1,
-        2: 2,
-      },
-    },
-    user2: {
-      watched: {
-        2: 2,
-      },
-    },
-  },
-};
-
 // Log out
 async function logout() {
   await signOut(auth);
@@ -145,57 +129,4 @@ async function logout() {
 
 function startAuthUi() {
   authUi.start('#firebaseui-auth-container', uiConfig);
-}
-
-return;
-// import './db';
-
-setTimeout(() => {
-  if (!auth.currentUser) return;
-  const userId = auth.currentUser.uid;
-  console.log('userId:', userId);
-  const usersRef = ref(db, '/users');
-  // get(usersRef)
-  //   .then(snapshot => {
-  //     console.log(snapshot.val());
-  //   })
-  //   .catch(console.log);
-
-  // const userRef = ref(db, `/users/${userId}`);
-
-  // const movieId = Math.trunc(Math.random() * 100);
-  // update(ref(db, `/users/${userId}/watched`), {
-  //   [movieId]: movieId,
-  // });
-
-  // get(userRef).then(snapshot => {
-  //   if (!snapshot.exists()) {
-  //     console.log('No such user. Creating...');
-  //     const newUser = {
-  //       [userId]: {
-  //         watched: null,
-  //         queued: { b: 2 },
-  //       },
-  //     };
-  //     console.log(newUser);
-  //     update(ref(db, '/users'), newUser);
-  //     // set(ref(db, '/users'), newUser);
-  //     return;
-  //   }
-  //   console.log('user exists');
-  //   const movieId = Math.trunc(Math.random() * 100);
-  //   update(ref(db, `/users/${userId}/watched`), {
-  //     [movieId]: movieId,
-  //   });
-  // });
-
-  // getValue(data).then(data => {
-  //   console.log(data);
-  // });
-}, 2000);
-
-function getValue(ref) {
-  return new Promise(resolve =>
-    onValue(ref, snapshot => resolve(snapshot.val()))
-  );
 }
